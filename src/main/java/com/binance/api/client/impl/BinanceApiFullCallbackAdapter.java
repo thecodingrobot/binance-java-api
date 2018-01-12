@@ -8,18 +8,21 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import static com.binance.api.client.impl.BinanceApiServiceGenerator.getBinanceApiError;
 
 /**
  * An adapter/wrapper which transforms a Callback from Retrofit into a BinanceApiCallback which is exposed to the client.
  */
-public class BinanceApiCallbackAdapter<T> implements Callback<T> {
+public class BinanceApiFullCallbackAdapter<T> implements Callback<T> {
 
   private final BinanceApiCallback<T> callback;
+  private final Consumer<Throwable> errorHandler;
 
-  public BinanceApiCallbackAdapter(BinanceApiCallback<T> callback) {
+  public BinanceApiFullCallbackAdapter(BinanceApiCallback<T> callback, Consumer<Throwable> errorHandler) {
     this.callback = callback;
+    this.errorHandler = errorHandler;
   }
 
   public void onResponse(Call<T> call, Response<T> response) {
@@ -33,15 +36,17 @@ public class BinanceApiCallbackAdapter<T> implements Callback<T> {
       }
       try {
         BinanceApiError apiError = getBinanceApiError(response);
-        throw new BinanceApiException(apiError);
+        if (errorHandler != null) errorHandler.accept(new BinanceApiException(apiError));
+        else throw new BinanceApiException(apiError);
       } catch (IOException e) {
-        throw new BinanceApiException(e);
+        if (errorHandler != null) errorHandler.accept(e);
+        else throw new BinanceApiException(e);
       }
     }
   }
 
   @Override
   public void onFailure(Call<T> call, Throwable throwable) {
-    throw new BinanceApiException(throwable);
+    if (errorHandler != null) errorHandler.accept(throwable);
   }
 }

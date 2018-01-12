@@ -7,7 +7,7 @@ import com.binance.api.client.exception.BinanceApiException;
  *
  * @param <T> the return type from the callback
  */
-public interface BinanceApiCallback<T> {
+public interface BinanceApiFullCallback<T> {
 
     /**
      * Called whenever a response comes back from the Binance API.
@@ -16,4 +16,6 @@ public interface BinanceApiCallback<T> {
      * @throws BinanceApiException if it is not possible to obtain the expected response object (e.g. incorrect API-KEY).
      */
     void onResponse(T response) throws BinanceApiException;
+
+    void onFailure(Throwable t);
 }

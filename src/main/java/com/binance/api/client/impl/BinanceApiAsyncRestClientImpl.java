@@ -27,6 +27,7 @@ import com.binance.api.client.domain.market.TickerPrice;
 import com.binance.api.client.domain.market.TickerStatistics;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.binance.api.client.impl.BinanceApiServiceGenerator.createService;
 
@@ -128,6 +129,13 @@ public class BinanceApiAsyncRestClientImpl implements BinanceApiAsyncRestClient 
     binanceApiService.cancelOrder(cancelOrderRequest.getSymbol(),
         cancelOrderRequest.getOrderId(), cancelOrderRequest.getOrigClientOrderId(), cancelOrderRequest.getNewClientOrderId(),
         cancelOrderRequest.getRecvWindow(), cancelOrderRequest.getTimestamp()).enqueue(new BinanceApiCallbackAdapter<>(callback));
+  }
+
+  @Override
+  public void cancelOrder(CancelOrderRequest cancelOrderRequest, BinanceApiCallback<Void> callback, Consumer<Throwable> errorHandler) {
+    binanceApiService.cancelOrder(cancelOrderRequest.getSymbol(),
+            cancelOrderRequest.getOrderId(), cancelOrderRequest.getOrigClientOrderId(), cancelOrderRequest.getNewClientOrderId(),
+            cancelOrderRequest.getRecvWindow(), cancelOrderRequest.getTimestamp()).enqueue(new BinanceApiFullCallbackAdapter<>(callback, errorHandler));
   }
 
   @Override

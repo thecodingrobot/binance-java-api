@@ -24,6 +24,7 @@ import com.binance.api.client.domain.market.TickerPrice;
 import com.binance.api.client.domain.market.TickerStatistics;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Binance API façade, supporting asynchronous/non-blocking access Binance's REST API.
@@ -156,6 +157,15 @@ public interface BinanceApiAsyncRestClient {
    * @param callback the callback that handles the response
    */
   void cancelOrder(CancelOrderRequest cancelOrderRequest, BinanceApiCallback<Void> callback);
+
+  /**
+   * Cancel an active order (asynchronous).
+   *
+   * @param cancelOrderRequest order status request parameters
+   * @param callback the callback that handles the response
+   * @param errorHandler error handler
+   */
+  void cancelOrder(CancelOrderRequest cancelOrderRequest, BinanceApiCallback<Void> callback, Consumer<Throwable> errorHandler);
 
   /**
    * Get all open orders on a symbol (asynchronous).

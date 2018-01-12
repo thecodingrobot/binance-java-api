@@ -1,5 +1,6 @@
 package com.binance.api.client;
 
+import com.binance.api.client.domain.event.Tuple;
 import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.CandlestickEvent;
 import com.binance.api.client.domain.event.DepthEvent;
@@ -17,5 +18,15 @@ public interface BinanceApiWebSocketClient {
 
   void onAggTradeEvent(String symbol, BinanceApiCallback<AggTradeEvent> callback);
 
+  void onAggTradeEvent(String symbol, BinanceApiFullCallback<AggTradeEvent> callback);
+
+  WebSocketConnection onAggTradeEvent(String[] symbols, BinanceApiFullCallback<Tuple<AggTradeEvent>> callback);
+
   void onUserDataUpdateEvent(String listenKey, BinanceApiCallback<UserDataUpdateEvent> callback);
+
+  WebSocketConnection onUserDataUpdateEvent(String[] listenKeys, BinanceApiCallback<Tuple<UserDataUpdateEvent>> callback);
+
+  void onUserDataUpdateEvent(String listenKey, BinanceApiFullCallback<UserDataUpdateEvent> callback);
+
+  WebSocketConnection onUserDataUpdateEvent(String[] listenKeys, BinanceApiFullCallback<Tuple<UserDataUpdateEvent>> callback);
 }
