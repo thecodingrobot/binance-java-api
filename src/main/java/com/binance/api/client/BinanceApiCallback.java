@@ -16,4 +16,6 @@ public interface BinanceApiCallback<T> {
      * @throws BinanceApiException if it is not possible to obtain the expected response object (e.g. incorrect API-KEY).
      */
     void onResponse(T response) throws BinanceApiException;
+
+    void onFailure(Throwable t);
 }
