@@ -50,7 +50,7 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
   @Override
   public void onAggTradeEvent(String symbol, BinanceApiFullCallback<AggTradeEvent> callback) {
     final String channel = String.format("%s@aggTrade", symbol);
-    createNewWebSocket(channel, new BinanceApiWebSocketFullListener<>(callback, AggTradeEvent.class));
+    createNewWebSocket(channel, new BinanceApiWebSocketListener<>(callback, AggTradeEvent.class, callback::onFailure));
   }
 
   @Override
@@ -59,7 +59,7 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
     for (int i = 0; i < channels.length; i++) {
       channels[i] = String.format("%s@aggTrade", symbols[i]);
     }
-    return createNewWebSocket(channels, new BinanceApiWebSocketStreamsListener<>(callback::onResponse, callback::onFailure, AggTradeEvent.class));
+    return createNewWebSocket(channels, new BinanceApiWebSocketStreamsListener<>(callback, callback::onFailure, AggTradeEvent.class));
   }
 
   public void onUserDataUpdateEvent(String listenKey, BinanceApiCallback<UserDataUpdateEvent> callback) {
@@ -72,12 +72,12 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
 
   @Override
   public void onUserDataUpdateEvent(String listenKey, BinanceApiFullCallback<UserDataUpdateEvent> callback) {
-    createNewWebSocket(listenKey, new BinanceApiWebSocketFullListener<>(callback, UserDataUpdateEvent.class));
+    createNewWebSocket(listenKey, new BinanceApiWebSocketListener<>(callback, UserDataUpdateEvent.class));
   }
 
   @Override
   public WebSocketConnection onUserDataUpdateEvent(String[] listenKeys, BinanceApiFullCallback<Tuple<UserDataUpdateEvent>> callback) {
-    return createNewWebSocket(listenKeys, new BinanceApiWebSocketStreamsListener<>(callback::onResponse, callback::onFailure, UserDataUpdateEvent.class));
+    return createNewWebSocket(listenKeys, new BinanceApiWebSocketStreamsListener<>(callback, callback::onFailure, UserDataUpdateEvent.class));
   }
 
   private void createNewWebSocket(String channel, WebSocketListener listener) {

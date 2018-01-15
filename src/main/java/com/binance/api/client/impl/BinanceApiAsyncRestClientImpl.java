@@ -2,6 +2,7 @@ package com.binance.api.client.impl;
 
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
+import com.binance.api.client.BinanceApiFullCallback;
 import com.binance.api.client.constant.BinanceApiConstants;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.DepositAddress;
@@ -109,10 +110,24 @@ public class BinanceApiAsyncRestClientImpl implements BinanceApiAsyncRestClient 
   }
 
   @Override
+  public void newOrder(NewOrder order, BinanceApiCallback<NewOrderResponse> callback, Consumer<Throwable> errorHandler) {
+    binanceApiService.newOrder(order.getSymbol(), order.getSide(), order.getType(),
+        order.getTimeInForce(), order.getQuantity(), order.getPrice(), order.getStopPrice(), order.getIcebergQty(),
+        order.getRecvWindow(), order.getTimestamp()).enqueue(new BinanceApiCallbackAdapter<>(callback, errorHandler));
+  }
+
+  @Override
   public void newOrderTest(NewOrder order, BinanceApiCallback<Void> callback) {
     binanceApiService.newOrderTest(order.getSymbol(), order.getSide(), order.getType(),
         order.getTimeInForce(), order.getQuantity(), order.getPrice(), order.getStopPrice(), order.getIcebergQty(),
         order.getRecvWindow(), order.getTimestamp()).enqueue(new BinanceApiCallbackAdapter<>(callback));
+  }
+
+  @Override
+  public void newOrderTest(NewOrder order, BinanceApiCallback<Void> callback, Consumer<Throwable> errorHandler) {
+    binanceApiService.newOrderTest(order.getSymbol(), order.getSide(), order.getType(),
+        order.getTimeInForce(), order.getQuantity(), order.getPrice(), order.getStopPrice(), order.getIcebergQty(),
+        order.getRecvWindow(), order.getTimestamp()).enqueue(new BinanceApiCallbackAdapter<>(callback, errorHandler));
   }
 
   // Account endpoints
@@ -135,7 +150,7 @@ public class BinanceApiAsyncRestClientImpl implements BinanceApiAsyncRestClient 
   public void cancelOrder(CancelOrderRequest cancelOrderRequest, BinanceApiCallback<Void> callback, Consumer<Throwable> errorHandler) {
     binanceApiService.cancelOrder(cancelOrderRequest.getSymbol(),
             cancelOrderRequest.getOrderId(), cancelOrderRequest.getOrigClientOrderId(), cancelOrderRequest.getNewClientOrderId(),
-            cancelOrderRequest.getRecvWindow(), cancelOrderRequest.getTimestamp()).enqueue(new BinanceApiFullCallbackAdapter<>(callback, errorHandler));
+            cancelOrderRequest.getRecvWindow(), cancelOrderRequest.getTimestamp()).enqueue(new BinanceApiCallbackAdapter<>(callback, errorHandler));
   }
 
   @Override

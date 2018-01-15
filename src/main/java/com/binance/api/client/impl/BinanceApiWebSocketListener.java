@@ -8,6 +8,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * Binance API WebSocket listener.
@@ -15,12 +16,19 @@ import java.io.IOException;
 public class BinanceApiWebSocketListener<T> extends WebSocketListener {
 
   private BinanceApiCallback<T> callback;
+  private Consumer<Throwable> errorHandler;
 
   private Class<T> eventClass;
 
   public BinanceApiWebSocketListener(BinanceApiCallback<T> callback, Class<T> eventClass) {
     this.callback = callback;
     this.eventClass = eventClass;
+  }
+
+  public BinanceApiWebSocketListener(BinanceApiCallback<T> callback, Class<T> eventClass, Consumer<Throwable> errorHandler) {
+    this.callback = callback;
+    this.eventClass = eventClass;
+    this.errorHandler = errorHandler;
   }
 
   @Override
@@ -30,12 +38,14 @@ public class BinanceApiWebSocketListener<T> extends WebSocketListener {
       T event = mapper.readValue(text, eventClass);
       callback.onResponse(event);
     } catch (IOException e) {
-      throw new BinanceApiException(e);
+      if (errorHandler != null) errorHandler.accept(e);
+      else throw new BinanceApiException(e);
     }
   }
 
   @Override
   public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-    throw new BinanceApiException(t);
+    if (errorHandler != null) errorHandler.accept(t);
+    else throw new BinanceApiException(t);
   }
 }

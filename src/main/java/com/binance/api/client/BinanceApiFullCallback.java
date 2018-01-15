@@ -7,7 +7,7 @@ import com.binance.api.client.exception.BinanceApiException;
  *
  * @param <T> the return type from the callback
  */
-public interface BinanceApiFullCallback<T> {
+public interface BinanceApiFullCallback<T> extends BinanceApiCallback<T> {
 
     /**
      * Called whenever a response comes back from the Binance API.

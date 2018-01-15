@@ -134,6 +134,8 @@ public interface BinanceApiAsyncRestClient {
    */
   void newOrder(NewOrder order, BinanceApiCallback<NewOrderResponse> callback);
 
+  void newOrder(NewOrder order, BinanceApiCallback<NewOrderResponse> callback, Consumer<Throwable> errorHandler);
+
   /**
    * Test new order creation and signature/recvWindow long. Creates and validates a new order but does not send it into the matching engine.
    *
@@ -141,6 +143,8 @@ public interface BinanceApiAsyncRestClient {
    * @param callback the callback that handles the response
    */
   void newOrderTest(NewOrder order, BinanceApiCallback<Void> callback);
+
+  void newOrderTest(NewOrder order, BinanceApiCallback<Void> callback, Consumer<Throwable> errorHandler);
 
   /**
    * Check an order's status (asynchronous).
