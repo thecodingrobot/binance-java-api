@@ -1,7 +1,9 @@
 package com.binance.api.client;
 
+import java.util.List;
 import com.binance.api.client.domain.event.Tuple;
 import com.binance.api.client.domain.event.AggTradeEvent;
+import com.binance.api.client.domain.event.AllMarketTickersEvent;
 import com.binance.api.client.domain.event.CandlestickEvent;
 import com.binance.api.client.domain.event.DepthEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent;
@@ -29,4 +31,6 @@ public interface BinanceApiWebSocketClient {
   void onUserDataUpdateEvent(String listenKey, BinanceApiFullCallback<UserDataUpdateEvent> callback);
 
   WebSocketConnection onUserDataUpdateEvent(String[] listenKeys, BinanceApiFullCallback<Tuple<UserDataUpdateEvent>> callback);
+  
+  void onAllMarketTickersEvent(BinanceApiCallback<List<AllMarketTickersEvent>> callback);
 }
