@@ -1,5 +1,13 @@
 package com.binance.api.client.impl;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.List;
+import okhttp3.Dispatcher;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiFullCallback;
 import com.binance.api.client.BinanceApiWebSocketClient;
@@ -7,18 +15,11 @@ import com.binance.api.client.WebSocketConnection;
 import com.binance.api.client.constant.BinanceApiConstants;
 import com.binance.api.client.domain.event.Tuple;
 import com.binance.api.client.domain.event.AggTradeEvent;
+import com.binance.api.client.domain.event.AllMarketTickersEvent;
 import com.binance.api.client.domain.event.CandlestickEvent;
 import com.binance.api.client.domain.event.DepthEvent;
 import com.binance.api.client.domain.event.UserDataUpdateEvent;
-import com.binance.api.client.domain.market.AggTrade;
 import com.binance.api.client.domain.market.CandlestickInterval;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
-
-import java.io.Closeable;
-import java.io.IOException;
 
 /**
  * Binance API WebSocket client implementation using OkHttp.
@@ -28,7 +29,9 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
   private OkHttpClient client;
 
   public BinanceApiWebSocketClientImpl() {
-    this.client = new OkHttpClient();
+    Dispatcher d = new Dispatcher();
+    d.setMaxRequestsPerHost(100);
+    this.client = new OkHttpClient.Builder().dispatcher(d).build();
   }
 
   public void onDepthEvent(String symbol, BinanceApiCallback<DepthEvent> callback) {
@@ -75,6 +78,11 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
     createNewWebSocket(listenKey, new BinanceApiWebSocketListener<>(callback, UserDataUpdateEvent.class));
   }
 
+  public void onAllMarketTickersEvent(BinanceApiCallback<List<AllMarketTickersEvent>> callback) {
+    final String channel = "!ticker@arr";
+    createNewWebSocket(channel, new BinanceApiWebSocketListener<List<AllMarketTickersEvent>>(callback));
+  }
+
   @Override
   public WebSocketConnection onUserDataUpdateEvent(String[] listenKeys, BinanceApiFullCallback<Tuple<UserDataUpdateEvent>> callback) {
     return createNewWebSocket(listenKeys, new BinanceApiWebSocketStreamsListener<>(callback, callback::onFailure, UserDataUpdateEvent.class));
@@ -97,4 +105,5 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
   public void close() throws IOException {
     client.dispatcher().executorService().shutdown();
   }
+
 }
