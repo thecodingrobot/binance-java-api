@@ -13,6 +13,7 @@ import com.binance.api.client.BinanceApiFullCallback;
 import com.binance.api.client.BinanceApiWebSocketClient;
 import com.binance.api.client.WebSocketConnection;
 import com.binance.api.client.constant.BinanceApiConstants;
+import com.binance.api.client.domain.event.Tuple;
 import com.binance.api.client.domain.event.AggTradeEvent;
 import com.binance.api.client.domain.event.AllMarketTickersEvent;
 import com.binance.api.client.domain.event.CandlestickEvent;
@@ -76,7 +77,7 @@ public class BinanceApiWebSocketClientImpl implements BinanceApiWebSocketClient,
   public void onUserDataUpdateEvent(String listenKey, BinanceApiFullCallback<UserDataUpdateEvent> callback) {
     createNewWebSocket(listenKey, new BinanceApiWebSocketListener<>(callback, UserDataUpdateEvent.class));
   }
-  
+
   public void onAllMarketTickersEvent(BinanceApiCallback<List<AllMarketTickersEvent>> callback) {
     final String channel = "!ticker@arr";
     createNewWebSocket(channel, new BinanceApiWebSocketListener<List<AllMarketTickersEvent>>(callback));
